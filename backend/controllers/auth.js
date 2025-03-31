@@ -9,7 +9,7 @@ exports.authenticate = (req, res, next) => {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return res.status(401).json({ message: 'Authentication required' });
     }
-    
+    g
     const token = authHeader.split(' ')[1];
     
     // Verify token
