@@ -6,12 +6,40 @@ const PostForm = () => {
   const [content, setContent] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Post data:', { title, content });
-    navigate('/');
+    
+    // Build your post data payload
+    const postData = { title, content };
+  
+    try {
+      // Make a POST request to the backend endpoint
+      const response = await fetch('/api/posts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postData)
+      });
+  
+      // Check if the response is ok (status in the range 200-299)
+      if (!response.ok) {
+        console.error('Error creating post:', response.statusText);
+        return; // Optionally, set some error state here
+      }
+  
+      // Optionally, parse the JSON response if needed
+      const data = await response.json();
+      console.log('Post created successfully:', data);
+  
+      // Navigate to the home page or any other route after a successful submission
+      navigate('/');
+    } catch (error) {
+      console.error('Error connecting to the API:', error);
+      // Optionally, set some error state here to display an error message to the user
+    }
   };
-
+  
   return (
     <div className="max-w-md mx-auto mt-10">
       <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">

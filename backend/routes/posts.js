@@ -1,8 +1,8 @@
 // backend/routes/posts.js
 const express = require('express');
 const router = express.Router();
-const { validatePost } = require('../middleware/validation');
-const { authenticate } = require('../middleware/auth');
+const { validatePost } = require('../controllers/validation');
+const { authenticate } = require('../controllers/auth');
 
 // Get all posts
 router.get('/', async (req, res, next) => {
