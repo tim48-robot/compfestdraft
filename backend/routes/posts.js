@@ -1,45 +1,45 @@
-// backend/routes/posts.js
-const express = require('express');
-const router = express.Router();
-const { validatePost } = require('../controllers/validation');
-const { authenticate } = require('../controllers/auth');
+  // backend/routes/posts.js
+  import { Router } from 'express';
+  const router = Router();
+  import { validatePost } from '../controllers/validation.js'; // Fixed path
+  import { authenticate } from '../controllers/auth.js'; // Fixed path
 
-// Get all posts
-router.get('/', async (req, res, next) => {
-  try {
-    const posts = await req.prisma.post.findMany({
-      include: {
-        author: {
-          select: {
-            id: true,
-            username: true,
-            name: true,
-            avatar: true
+  // Get all posts
+  router.get('/', async (req, res, next) => {
+    try {
+      const posts = await req.prisma.post.findMany({
+        include: {
+          author: {
+            select: {
+              id: true,
+              username: true,
+              name: true,
+              avatar: true
+            }
+          },
+          _count: {
+            select: {
+              comments: true,
+              likes: true
+            }
           }
         },
-        _count: {
-          select: {
-            comments: true,
-            likes: true
-          }
+        orderBy: {
+          createdAt: 'desc'
         }
-      },
-      orderBy: {
-        createdAt: 'desc'
-      }
-    });
-    
-    res.json(posts);
-  } catch (error) {
-    next(error);
-  }
-});
+      });
+      
+      res.json(posts);
+    } catch (error) {
+      next(error);
+    }
+  });
 
 // Get a specific post by ID
+
 router.get('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
-    
     const post = await req.prisma.post.findUnique({
       where: { id },
       include: {
@@ -78,6 +78,8 @@ router.get('/:id', async (req, res, next) => {
         }
       }
     });
+
+
     
     if (!post) {
       return res.status(404).json({ message: 'Post not found' });
@@ -92,14 +94,13 @@ router.get('/:id', async (req, res, next) => {
 // Create a new post
 router.post('/', authenticate, validatePost, async (req, res, next) => {
   try {
-    const { content, imageUrl, communityId } = req.body;
+    const { content, imageUrl } = req.body;
     const authorId = req.user.id;
     
     const newPost = await req.prisma.post.create({
       data: {
         content,
         imageUrl,
-        communityId,
         author: {
           connect: { id: authorId }
         }
@@ -122,17 +123,17 @@ router.post('/', authenticate, validatePost, async (req, res, next) => {
   }
 });
 
-// Update a post
 router.put('/:id', authenticate, validatePost, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { content, imageUrl } = req.body;
     const userId = req.user.id;
     
-    // Check if post exists and belongs to the user
     const existingPost = await req.prisma.post.findUnique({
       where: { id },
-      select: { authorId: true }
+      select: { authorId: true, 
+        createdAt: true
+      }
     });
     
     if (!existingPost) {
@@ -141,6 +142,13 @@ router.put('/:id', authenticate, validatePost, async (req, res, next) => {
     
     if (existingPost.authorId !== userId) {
       return res.status(403).json({ message: 'Not authorized to update this post' });
+    }
+
+    const datenow = new Date(); // cek date pada momen klient ingin edit
+    const creationtime = existingPost.createdAt; // type yang di save di neon udah Date().
+    const editmax = datenow - creationtime;
+    if (editmax > 1800000 ) { // karena milisecond, 30 menit itu 1.8 juta milisekon
+      return res.status(400).json({message: "Sudah Lewat 30 Menit :)))"})
     }
     
     const updatedPost = await req.prisma.post.update({
@@ -201,4 +209,4 @@ router.delete('/:id', authenticate, async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

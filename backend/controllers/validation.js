@@ -1,4 +1,4 @@
-exports.validatePost = (req, res, next) => {
+export function validatePost(req, res, next) {
     const { content } = req.body;
     
     if (!content || content.trim() === '') {
@@ -10,10 +10,10 @@ exports.validatePost = (req, res, next) => {
     }
     
     next();
-  };
+  }
   
   // Validate comment creation/update
-  exports.validateComment = (req, res, next) => {
+  export function validateComment(req, res, next) {
     const { content, postId } = req.body;
     
     if (!content || content.trim() === '') {
@@ -29,10 +29,10 @@ exports.validatePost = (req, res, next) => {
     }
     
     next();
-  };
+  }
   
   // Validate user registration
-  exports.validateUser = (req, res, next) => {
+  export function validateUser(req, res, next) {
     const { email, username, password, name } = req.body;
     
     if (!email || !username || !password) {
@@ -59,10 +59,10 @@ exports.validatePost = (req, res, next) => {
     }
     
     next();
-  };
+  }
   
   // Validate login
-  exports.validateLogin = (req, res, next) => {
+  export function validateLogin(req, res, next) {
     const { email, password } = req.body;
     
     if (!email || !password) {
@@ -70,4 +70,4 @@ exports.validatePost = (req, res, next) => {
     }
     
     next();
-  };
+  }

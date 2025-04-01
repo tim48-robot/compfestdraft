@@ -1,12 +1,13 @@
-const express = require('express');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-const { authenticate } = require('../controllers/auth');
-const { validateUser, validateLogin } = require('../controllers/validation');
+import { Router } from 'express';
+import { hash, compare } from 'bcrypt';
+import  pkg   from 'jsonwebtoken';
+import { authenticate } from '../controllers/auth.js';
+import { validateUser, validateLogin } from '../controllers/validation.js';
 
-const router = express.Router();
+const router = Router();
+const {sign} = pkg;
 
-// Register a new user
+// Register
 router.post('/register', validateUser, async (req, res, next) => {
   try {
     const { email, username, password, name } = req.body;
@@ -28,7 +29,7 @@ router.post('/register', validateUser, async (req, res, next) => {
     }
     
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await hash(password, 10);
     
     // Create the user
     const newUser = await req.prisma.user.create({
@@ -48,7 +49,7 @@ router.post('/register', validateUser, async (req, res, next) => {
     });
     
     // Generate JWT token
-    const token = jwt.sign(
+    const token = sign(
       { id: newUser.id, email: newUser.email },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '7d' }
@@ -78,14 +79,14 @@ router.post('/login', validateLogin, async (req, res, next) => {
     }
     
     // Check password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await compare(password, user.password);
     
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     
     // Generate JWT token
-    const token = jwt.sign(
+    const token = sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET || 'your-secret-key',
       { expiresIn: '7d' }
@@ -137,4 +138,4 @@ router.get('/me', authenticate, async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

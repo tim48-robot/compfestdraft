@@ -1,7 +1,7 @@
-const express = require('express');
-const router = express.Router();
-const { validateComment } = require('../controllers/validation');
-const { authenticate } = require('../controllers/auth');
+import { Router } from 'express';
+const router = Router();
+import { validateComment } from '../controllers/validation.js';
+import { authenticate } from '../controllers/auth.js';
 
 // Get comments for a specific post
 router.get('/post/:postId', async (req, res, next) => {
@@ -150,4 +150,4 @@ router.delete('/:id', authenticate, async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;

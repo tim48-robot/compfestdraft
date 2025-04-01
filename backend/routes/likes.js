@@ -1,6 +1,6 @@
-const express = require('express');
-const router = express.Router();
-const { authenticate } = require('../controllers/auth');
+import { Router } from 'express';
+const router = Router();
+import { authenticate } from '../controllers/auth.js';
 
 // Get likes for a specific post
 router.get('/post/:postId', async (req, res, next) => {
@@ -108,4 +108,4 @@ router.delete('/post/:postId', authenticate, async (req, res, next) => {
   }
 });
 
-module.exports = router;
+export default router;
