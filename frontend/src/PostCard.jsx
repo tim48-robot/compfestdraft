@@ -78,7 +78,7 @@ const PostCard = ({ post }) => {
 
 
       <div className="mt-4 flex space-x-2">
-        <LikeButton/>
+        <LikeButton key={post.id} post={post} />
       </div>
 
     </div>

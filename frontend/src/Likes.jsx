@@ -1,39 +1,111 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const LikeButton = () => {
-  // 1. Create two state variables
+const LikeButton = ({ post }) => {
   const [isLiked, setIsLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
+  const [likesData, setLikesData] = useState([]); 
+  const API_URL = 'http://localhost:5000';
 
-  // 2. Function to handle like/unlike
+  useEffect(() => {
+    if (post && post.id) {
+      fetchLikes();
+    }
+  }, [post?.id]);
+
+  const fetchLikes = () => {
+    fetch(`${API_URL}/api/likes/post/${post.id}`)
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to fetch likes');
+        return response.json();
+      })
+      .then(data => {
+        setLikesData(data);
+        setLikeCount(data.length);
+        
+        const token = localStorage.getItem('token');
+        if (token) {
+
+          try {
+            const tokenData = JSON.parse(atob(token.split('.')[1]));
+            const currentUserId = tokenData.id;
+            const userLiked = data.some(like => like.user.id === currentUserId);
+            setIsLiked(userLiked);
+          } catch (error) {
+            console.error('Error processing token:', error);
+          }
+        }
+        
+        console.log('LIKES_DATA:', JSON.stringify(data));
+      })
+      .catch(err => {
+        console.error('Error fetching likes:', err);
+      });
+  };
+
   const handleLikeToggle = () => {
-    // This line FLIPS the current value of isLiked
-    // If isLiked was false, it becomes true
-    // If isLiked was true, it becomes false
-    setIsLiked(!isLiked);
+    const token = localStorage.getItem('token');
     
-    // Conditional logic based on the NEW value of isLiked
-    if (!isLiked) {
-      // If it was NOT liked before (now becoming liked)
-      // Increment the like count
-      setLikeCount(prevCount => prevCount + 1);
+    if (!token) {
+      console.error('You need to be logged in to like posts');
+      return;
+    }
+
+    const newIsLiked = !isLiked;
+    setIsLiked(newIsLiked);
+    setLikeCount(prevCount => newIsLiked ? prevCount + 1 : prevCount - 1);
+
+    if (newIsLiked) {
+      fetch(`${API_URL}/api/likes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ 
+          postId: post.id 
+        })
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to like post');
+        return response.json();
+      })
+      .then(data => {
+        fetchLikes();
+      })
+      .catch(err => {
+        setIsLiked(false);
+        setLikeCount(prevCount => prevCount - 1);
+        console.error('Error liking post:', err);
+      });
     } else {
-      // If it was liked before (now becoming unliked)
-      // Decrement the like count
-      setLikeCount(prevCount => prevCount - 1);
+      fetch(`${API_URL}/api/likes/post/${post.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        if (!response.ok) throw new Error('Failed to unlike post');
+        return response.json();
+      })
+      .then(data => {
+        fetchLikes();
+      })
+      .catch(err => {
+        setIsLiked(true);
+        setLikeCount(prevCount => prevCount + 1);
+        console.error('Error unliking post:', err);
+      });
     }
   };
 
   return (
-    // 3. Rendering the button with dynamic classes and content
     <div className="flex items-center space-x-4">
-      <button 
-        // 4. onClick triggers handleLikeToggle function
+      <button
         onClick={handleLikeToggle}
-        // 5. Dynamic classes based on isLiked state
         className={`
           p-2 rounded-full transition-colors duration-200
-          ${isLiked 
+          ${isLiked
             ? 'bg-red-500 text-white'  // If liked: red background
             : 'bg-gray-200 text-gray-700'  // If not liked: gray background
           }
