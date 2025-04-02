@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  username  String   @unique
+  password  String
+  name      String?
+  bio       String?
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  posts      Post[]
+  comments   Comment[]
+  likes      Like[]
+  communities CommunityMember[]
+}
+
+model Post {
+  id          String   @id @default(uuid())
+  title       String
+  content     String
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  communityId String?
+  community   Community? @relation(fields: [communityId], references: [id])
+  
+  comments    Comment[]
+  likes       Like[]
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id])
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+}
+
+model Community {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  imageUrl    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  posts       Post[]
+  members     CommunityMember[]
+}
+
+model CommunityMember {
+  id          String   @id @default(uuid())
+  role        String   @default("member") // member, moderator, admin
+  joinedAt    DateTime @default(now())
+  
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  communityId String
+  community   Community @relation(fields: [communityId], references: [id])
+
+  @@unique([userId, communityId])
+}
