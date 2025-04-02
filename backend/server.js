@@ -1,7 +1,6 @@
 import express, { json } from 'express';
 import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
-
 import postRoutes from './routes/posts.js';
 import commentRoutes from './routes/comments.js';
 import likeRoutes from './routes/likes.js';
