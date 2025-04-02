@@ -6,7 +6,6 @@ import LikeButton from './Likes.jsx';
 
 const PostCard = ({ post }) => {
   const navigate = useNavigate();
-  // Handle case when post is undefined (for example, during initial render)
   if (!post) {
     return (
       <div className="bg-white shadow-md rounded-lg p-4 mb-4">
@@ -20,7 +19,6 @@ const PostCard = ({ post }) => {
 
   const handleHapus = async () => {
     try {
-      // Get the token from localStorage
       const token = localStorage.getItem('token');
       
       if (!token) {
@@ -50,13 +48,10 @@ const PostCard = ({ post }) => {
 
 
 
-  // Format date if exists
   const formattedDate = post.createdAt ? new Date(post.createdAt).toLocaleString() : 'Unknown date';
   
-  // Get author info if exists
   const authorName = post.author ? post.author.username : 'Unknown user';
 
-  // diedit pada ... 
   const editedDate = post.updatedAt ? new Date (post.updatedAt).toLocaleString() : "";
     
     return (

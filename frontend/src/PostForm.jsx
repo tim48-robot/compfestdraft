@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-const API_URL = 'http://localhost:5000'; // Update this with your backend URL
+const API_URL = 'http://localhost:5000'; 
 
 const PostForm = () => {
   const [content, setContent] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-  const { id } = useParams(); // For edit mode
+  const { id } = useParams(); 
   const isEditMode = !!id;
 
-  // Fetch post data if in edit mode
   useEffect(() => {
     if (isEditMode) {
       setIsLoading(true);
@@ -38,7 +37,6 @@ const PostForm = () => {
     setError(null);
 
     try {
-      // Get token from localStorage
       const token = localStorage.getItem('token');
       
       if (!token) {

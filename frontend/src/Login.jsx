@@ -31,11 +31,9 @@ const Login = () => {
 
       const data = await response.json();
       
-      // Save token and user info in localStorage
       localStorage.setItem('token', data.token);
       localStorage.setItem('user', JSON.stringify(data.user));
       
-      // Redirect to home page
       navigate('/');
     } catch (err) {
       setError(err.message);

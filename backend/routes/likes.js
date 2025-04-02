@@ -2,7 +2,6 @@ import { Router } from 'express';
 const router = Router();
 import { authenticate } from '../controllers/auth.js';
 
-// Get likes for a specific post
 router.get('/post/:postId', async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -27,13 +26,11 @@ router.get('/post/:postId', async (req, res, next) => {
   }
 });
 
-// Like a post
 router.post('/', authenticate, async (req, res, next) => {
   try {
     const { postId } = req.body;
     const userId = req.user.id;
     
-    // Check if post exists
     const post = await req.prisma.post.findUnique({
       where: { id: postId },
       select: { id: true }
@@ -43,7 +40,6 @@ router.post('/', authenticate, async (req, res, next) => {
       return res.status(404).json({ message: 'Post not found' });
     }
     
-    // Check if like already exists
     const existingLike = await req.prisma.like.findFirst({
       where: {
         postId,
@@ -80,13 +76,11 @@ router.post('/', authenticate, async (req, res, next) => {
   }
 });
 
-// Unlike a post
 router.delete('/post/:postId', authenticate, async (req, res, next) => {
   try {
     const { postId } = req.params;
     const userId = req.user.id;
     
-    // Check if like exists
     const existingLike = await req.prisma.like.findFirst({
       where: {
         postId,

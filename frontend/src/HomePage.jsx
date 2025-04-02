@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import PostCard from './PostCard.jsx';
-import PostDetail from './PostDetail.jsx';
 
-const API_URL = 'http://localhost:5000'; // Backend URL. 
+const API_URL = 'http://localhost:5000'; 
 
 const HomePage = () => {
   const [posts, setPosts] = useState([]);
@@ -11,11 +10,10 @@ const HomePage = () => {
   const [error, setError] = useState(null);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  useEffect(() => { //useeffect untuk lakukan dan cek semua dibawah ketika halaman load
+  useEffect(() => { 
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
 
-    // Fetch post dari url dibawah. tidak perlu menspesifik method GET karena by default GET
     setIsLoading(true);
     fetch(`${API_URL}/api/posts`)
       .then(response => {

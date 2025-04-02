@@ -1,10 +1,8 @@
-  // backend/routes/posts.js
   import { Router } from 'express';
   const router = Router();
-  import { validatePost } from '../controllers/validation.js'; // Fixed path
-  import { authenticate } from '../controllers/auth.js'; // Fixed path
+  import { validatePost } from '../controllers/validation.js';
+  import { authenticate } from '../controllers/auth.js'; 
 
-  // Get all posts
   router.get('/', async (req, res, next) => {
     try {
       const posts = await req.prisma.post.findMany({
@@ -35,7 +33,6 @@
     }
   });
 
-// Get a specific post by ID
 
 router.get('/:id', async (req, res, next) => {
   try {
@@ -91,7 +88,6 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
-// Create a new post
 router.post('/', authenticate, validatePost, async (req, res, next) => {
   try {
     const { content, imageUrl } = req.body;
@@ -144,10 +140,10 @@ router.put('/:id', authenticate, validatePost, async (req, res, next) => {
       return res.status(403).json({ message: 'Not authorized to update this post' });
     }
 
-    const datenow = new Date(); // cek date pada momen klient ingin edit
-    const creationtime = existingPost.createdAt; // type yang di save di neon udah Date().
+    const datenow = new Date();
+    const creationtime = existingPost.createdAt;
     const editmax = datenow - creationtime;
-    if (editmax > 1800000 ) { // karena milisecond, 30 menit itu 1.8 juta milisekon
+    if (editmax > 1800000 ) { 
       return res.status(400).json({message: "Sudah Lewat 30 Menit :)))"})
     }
     
@@ -176,13 +172,11 @@ router.put('/:id', authenticate, validatePost, async (req, res, next) => {
   }
 });
 
-// Delete a post
 router.delete('/:id', authenticate, async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
     
-    // Check if post exists and belongs to the user
     const existingPost = await req.prisma.post.findUnique({
       where: { id },
       select: { authorId: true }
@@ -196,7 +190,6 @@ router.delete('/:id', authenticate, async (req, res, next) => {
       return res.status(403).json({ message: 'Not authorized to delete this post' });
     }
     
-    // Delete associated likes and comments first (Prisma doesn't cascade by default)
     await req.prisma.$transaction([
       req.prisma.like.deleteMany({ where: { postId: id } }),
       req.prisma.comment.deleteMany({ where: { postId: id } }),

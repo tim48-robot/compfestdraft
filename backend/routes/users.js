@@ -7,12 +7,10 @@ import { validateUser, validateLogin } from '../controllers/validation.js';
 const router = Router();
 const {sign} = pkg;
 
-// Register
 router.post('/register', validateUser, async (req, res, next) => {
   try {
     const { email, username, password, name } = req.body;
     
-    // Check if user with email or username already exists
     const existingUser = await req.prisma.user.findFirst({
       where: {
         OR: [
@@ -28,10 +26,8 @@ router.post('/register', validateUser, async (req, res, next) => {
       });
     }
     
-    // Hash password
     const hashedPassword = await hash(password, 10);
     
-    // Create the user
     const newUser = await req.prisma.user.create({
       data: {
         email,
@@ -48,7 +44,6 @@ router.post('/register', validateUser, async (req, res, next) => {
       }
     });
     
-    // Generate JWT token
     const token = sign(
       { id: newUser.id, email: newUser.email },
       process.env.JWT_SECRET || 'your-secret-key',
@@ -64,12 +59,10 @@ router.post('/register', validateUser, async (req, res, next) => {
   }
 });
 
-// Login
 router.post('/login', validateLogin, async (req, res, next) => {
   try {
     const { email, password } = req.body;
     
-    // Find user by email
     const user = await req.prisma.user.findUnique({
       where: { email }
     });
@@ -78,14 +71,12 @@ router.post('/login', validateLogin, async (req, res, next) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     
-    // Check password
     const isPasswordValid = await compare(password, user.password);
     
     if (!isPasswordValid) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     
-    // Generate JWT token
     const token = sign(
       { id: user.id, email: user.email },
       process.env.JWT_SECRET || 'your-secret-key',
@@ -107,7 +98,6 @@ router.post('/login', validateLogin, async (req, res, next) => {
   }
 });
 
-// Get current user profile
 router.get('/me', authenticate, async (req, res, next) => {
   try {
     const user = await req.prisma.user.findUnique({

@@ -35,7 +35,6 @@ const LikeButton = ({ post }) => {
           }
         }
         
-        console.log('LIKES_DATA:', JSON.stringify(data));
       })
       .catch(err => {
         console.error('Error fetching likes:', err);
@@ -106,8 +105,8 @@ const LikeButton = ({ post }) => {
         className={`
           p-2 rounded-full transition-colors duration-200
           ${isLiked
-            ? 'bg-red-500 text-white'  // If liked: red background
-            : 'bg-gray-200 text-gray-700'  // If not liked: gray background
+            ? 'bg-red-500 text-white'  
+            : 'bg-gray-200 text-gray-700'  
           }
         `}
       >

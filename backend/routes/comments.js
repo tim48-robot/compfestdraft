@@ -3,7 +3,6 @@ const router = Router();
 import { validateComment } from '../controllers/validation.js';
 import { authenticate } from '../controllers/auth.js';
 
-// Get comments for a specific post
 router.get('/post/:postId', async (req, res, next) => {
   try {
     const { postId } = req.params;
@@ -31,13 +30,11 @@ router.get('/post/:postId', async (req, res, next) => {
   }
 });
 
-// Create a new comment
 router.post('/', authenticate, validateComment, async (req, res, next) => {
   try {
     const { content, postId } = req.body;
     const authorId = req.user.id;
     
-    // Check if post exists
     const post = await req.prisma.post.findUnique({
       where: { id: postId },
       select: { id: true }
@@ -75,14 +72,12 @@ router.post('/', authenticate, validateComment, async (req, res, next) => {
   }
 });
 
-// Update a comment
 router.put('/:id', authenticate, validateComment, async (req, res, next) => {
   try {
     const { id } = req.params;
     const { content } = req.body;
     const userId = req.user.id;
     
-    // Check if comment exists and belongs to the user
     const existingComment = await req.prisma.comment.findUnique({
       where: { id },
       select: { authorId: true }
@@ -120,13 +115,11 @@ router.put('/:id', authenticate, validateComment, async (req, res, next) => {
   }
 });
 
-// Delete a comment
 router.delete('/:id', authenticate, async (req, res, next) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
     
-    // Check if comment exists and belongs to the user
     const existingComment = await req.prisma.comment.findUnique({
       where: { id },
       select: { authorId: true }

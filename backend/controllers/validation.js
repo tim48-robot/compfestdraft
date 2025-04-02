@@ -12,7 +12,6 @@ export function validatePost(req, res, next) {
     next();
   }
   
-  // Validate comment creation/update
   export function validateComment(req, res, next) {
     const { content, postId } = req.body;
     
@@ -31,7 +30,6 @@ export function validatePost(req, res, next) {
     next();
   }
   
-  // Validate user registration
   export function validateUser(req, res, next) {
     const { email, username, password, name } = req.body;
     
@@ -39,13 +37,11 @@ export function validatePost(req, res, next) {
       return res.status(400).json({ message: 'Email, username, and password are required' });
     }
     
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ message: 'Invalid email format' });
     }
     
-    // Validate username (alphanumeric, no spaces)
     const usernameRegex = /^[a-zA-Z0-9_]+$/;
     if (!usernameRegex.test(username)) {
       return res.status(400).json({ 
@@ -53,7 +49,6 @@ export function validatePost(req, res, next) {
       });
     }
     
-    // Validate password strength
     if (password.length < 6) {
       return res.status(400).json({ message: 'Password must be at least 6 characters long' });
     }
@@ -61,7 +56,6 @@ export function validatePost(req, res, next) {
     next();
   }
   
-  // Validate login
   export function validateLogin(req, res, next) {
     const { email, password } = req.body;
     
