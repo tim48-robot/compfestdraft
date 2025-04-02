@@ -15,7 +15,7 @@ function App() {
         <div className="container mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<HomePage />} />
-            <Route path="/posts/:id" element={<PostDetail />} />
+            <Route path="/post/:id" element={<PostDetail />} />
             <Route path="/create-post" element={<PostForm />} />
             <Route path="/edit-post/:id" element={<PostForm />} />
             <Route path="/login" element={<Login />} />

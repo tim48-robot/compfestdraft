@@ -104,9 +104,7 @@ const PostDetail = () => {
   return (
     <div className="max-w-2xl mx-auto mt-10">
       <div className="bg-white p-6 rounded shadow">
-        {/* Post header */}
         <div className="flex items-center mb-4">
-        {/* Always use initial avatar since you don't have avatar functionality */}
         <div className="w-10 h-10 bg-gray-300 rounded-full mr-3 flex items-center justify-center">
             {post.author?.username.charAt(0).toUpperCase()}
         </div>
@@ -117,12 +115,10 @@ const PostDetail = () => {
             </p>
         </div>
         </div>
-        {/* Post content */}
         <div className="mb-6">
           <p className="text-lg">{post.content}</p>
         </div>
         
-        {/* Post actions */}
         <div className="flex items-center justify-between pb-4 border-b">
           <Likes post={post} />
           
@@ -150,7 +146,6 @@ const PostDetail = () => {
           )}
         </div>
         
-        {/* Comments section */}
         <Comments postId={post.id} />
       </div>
     </div>

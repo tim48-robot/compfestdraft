@@ -1,8 +1,11 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
 import LikeButton from './Likes.jsx';
 
 const PostCard = ({ post }) => {
+  const navigate = useNavigate();
   // Handle case when post is undefined (for example, during initial render)
   if (!post) {
     return (
@@ -12,6 +15,7 @@ const PostCard = ({ post }) => {
     );
   }
 
+  const handleComments = () => navigate(`post/${post.id}`)
 
 
   const handleHapus = async () => {
@@ -79,10 +83,11 @@ const PostCard = ({ post }) => {
 
       <div className="mt-4 flex space-x-2">
         <LikeButton key={post.id} post={post} />
+        <button onClick ={handleComments} className="text-gray-500 hover:text-blue-500 inline-flex items-center px-3 py-1">💬 Comments</button>
       </div>
 
     </div>
-  );
+  );  
 };
 
 export default PostCard;
