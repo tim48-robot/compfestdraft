@@ -16,7 +16,6 @@ const PostCard = ({ post }) => {
 
   const handleComments = () => navigate(`post/${post.id}`)
 
-
   const handleHapus = async () => {
     try {
       const token = localStorage.getItem('token');
